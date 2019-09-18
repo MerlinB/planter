@@ -1,0 +1,11 @@
+{
+    "name": "planter",
+    "description": "A Metanet tree traversal tool.",
+    "main": "lib/index.js",
+    "license": "OpenBSV",
+    "dependencies": {
+        "bitindex-sdk": "^3.0.14",
+        "bsv": "^0.30.0",
+        "node-fetch": "^2.6.0"
+    }
+}
