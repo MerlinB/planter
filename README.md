@@ -44,7 +44,7 @@ These additional options can be passed:
 
 - `parentTxID` - For creating child nodes. Alternatively, use `node.createUpdate`.
 - `keyPath` - For setting the keyPath manually. Default is `m/0`.  
-- `safe` - Use UP_FALSE for scripts. True by default.
+- `safe` - Use OP_FALSE for scripts. True by default.
 
 ```js
 await planter.createNode({
