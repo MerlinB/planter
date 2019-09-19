@@ -1,8 +1,16 @@
 {
     "name": "planter",
-    "description": "A Metanet tree traversal tool.",
+    "version": "0.0.10",
+    "description": "Create Metanet Nodes on Bitcoin SV",
+    "author": "unwriter",
     "main": "lib/index.js",
-    "license": "OpenBSV",
+    "license": "MIT",
+    "keywords": [
+      "bsv",
+      "bitcoinsv",
+      "bitcoin",
+      "metanet"
+    ],
     "dependencies": {
         "bitindex-sdk": "^3.0.14",
         "bsv": "^0.30.0",
