@@ -1,9 +1,16 @@
 {
   "name": "planter",
-  "version": "0.0.10",
-  "description": "Create Metanet Nodes on Bitcoin SV",
+  "version": "0.1.0",
+  "description": "Create MetaNet Nodes on Bitcoin SV",
   "author": "Merlin Buczek",
   "main": "lib/index.js",
+  "unpkg": "dist/planter.min.js",
+  "browser": "dist/planter.min.js",
+  "files": [
+    "lib",
+    "lib-esm",
+    "dist"
+  ],
   "license": "MIT",
   "repository": "https://github.com/MerlinB/planter",
   "keywords": [
@@ -12,10 +19,23 @@
     "bitcoin",
     "metanet"
   ],
+  "scripts": {
+    "build": "tsc && webpack",
+    "lint": "tslint -p tsconfig.json",
+    "prepare": "npm run build"
+  },
   "dependencies": {
     "bitindex-sdk": "^3.0.14",
     "bsv": "^0.30.0",
-    "meta-tree-hugger": "0.0.4",
-    "node-fetch": "^2.6.0"
+    "meta-tree-hugger": "^0.0.4",
+    "webpack-bundle-analyzer": "^3.5.2"
+  },
+  "devDependencies": {
+    "ts-loader": "^6.2.0",
+    "tslint": "^5.20.0",
+    "tslint-config-prettier": "^1.18.0",
+    "typescript": "^3.6.3",
+    "webpack": "^4.41.0",
+    "webpack-cli": "^3.3.9"
   }
 }

@@ -1,85 +1,81 @@
 # Planter
 
-Planter is a simple library for fetching and creating Metanet Nodes on the **Bitcoin SV blockchain**.
-
-# Status
-
-In active development. Expect things can break.
+Planter is a simple library for fetching and creating Metanet nodes on the **Bitcoin SV blockchain**.
 
 # Install
 
 ```bash
-npm install https://github.com/MerlinB/planter.git
+npm i planter
 ```
+
+Inlude *planter* in your project
+
+```js
+import { Planter } from "planter"
+```
+
+```html
+<script src="https://unpkg.com/bsv@0.30.0/bsv.min.js"></script>
+<script src="https://unpkg.com/planter/dist/planter.min.js"></script>
+```
+Be sure to include the [bsv library](https://docs.moneybutton.com/docs/bsv-overview.html) as well when using web version.
 
 # Usage
 
 ```js
-const planter = require('planter')
+const planter = new Planter();
+
+await planter.createNode({ data: ['Hello MetaNet'] })
 ```
 
-Creating a new node requires an [extended private Key](https://docs.moneybutton.com/docs/bsv-hd-private-key.html), as all public node addresses are derived from it. The [bsv library](https://docs.moneybutton.com/docs/bsv-overview.html) can be used to easily generate one.
+This will generate a wallet for you and create a Metanet root node.
+
+You can use an existing wallet by passing an [extended private Key](https://docs.moneybutton.com/docs/bsv-hd-private-key.html).
 
 ```js
-const bsv = require('bsv')
-
-const hdPrivateKey = bsv.HDPrivateKey.fromRandom()
+const planter = new Planter("xprv9s21ZrQH143K3eQCpBqZiuLgNSFPAfkqimfqyDxJ6HAaVUqWWJ4vz7eZdhgkR66jD1a2BtQEXbYjjbfVXWhxz7g4sNujBt6cnAoJrdfLkHh");
 ```
 
 Funding can be provided by depositing BSV to the associated address.
 
 ```js
-const address = hdPrivateKey.publicKey.toAddress().toString()
+planter.fundingAddress
 ```
+
 ## Creating root nodes
 
 ```js
-await planter.createNode({
-  xPrivKey: hdPrivateKey.toString(),
-  data: ['hello metanet']
-})
-``` 
+await planter.createNode(options)
+```
 
 These additional options can be passed:
 
-- `parentTxID` - For creating child nodes. Alternatively, use `node.createUpdate`.
-- `keyPath` - For setting the keyPath manually. Default is `m/0`.  
-- `safe` - Use OP_FALSE for scripts. True by default.
+- `data: string[]` - Array of data to include in `OP_RETURN`
+- `parentTxID: string` - For creating child nodes.
+- `keyPath: string` - For setting the keyPath manually. Default is `m/0`.
+- `safe: boolean` - Use OP_FALSE for scripts. False by default.
 
-```js
-await planter.createNode({
-  xPrivKey: hdPrivateKey.toString(),
-  data: ['hello metanet'],
-  parentTxID: parentTxID,
-  keyPath: 'm/0',
-  safe: true
-})
-``` 
 
 ## Traversing the Metanet
 
-Planter offers the same API as [treehugger](https://treehugger.bitpaste.app/) for fetching and traversing Metanet Nodes.
+Planter is built on top of [TreeHugger](https://treehugger.bitpaste.app/) and exposes its API for querying and traversing metanet nodes. See TreeHuggers [Github page](https://github.com/libitx/tree-hugger) for details.
 
 ```js
+import { TreeHugger, Planter } from "planter"
+
 const node = await TreeHugger.findNodeByTxid(txid)
 ```
+
+Planter extends TreeHugger by adding two additional methods:
 
 ## Creating child nodes
 
 ```js
-node.createChild({
-  xPrivKey: hdPrivateKey,
-  data: ['I am a child node']
-})
+node.createChild()
 ```
 
 ## Creating updates
 
-Note that an update is simply a new node with the same `keyPath` and can also be created using `createNode` to avaid an additional query.
-
 ```js
-node.createUpdate({
-  xPrivKey: hdPrivateKey,
-  data: ['I am a update']
-})
+node.createUpdate()
 ```

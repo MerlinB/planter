@@ -1,10 +1,12 @@
 {
   "compilerOptions": {
-    "target": "esnext",
+    "target": "es5",
     "module": "commonjs",
     "moduleResolution": "node",
-    "outDir": "./dist",
-    "rootDir": "./lib",
-    "lib": ["esnext", "dom"]
+    "outDir": "./lib",
+    "rootDir": "./src",
+    "sourceMap": true,
+    "declaration": true,
+    "lib": ["es2015", "dom"]
   }
 }

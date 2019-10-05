@@ -1,12 +1,15 @@
-import * as THNode from "meta-tree-hugger/lib/meta-node.js";
+import * as THNode from "meta-tree-hugger/lib/meta-node";
+import { IOptions, Planter } from "./push";
 
 export default class MetaNode extends THNode {
   constructor(tx) {
     super(tx);
   }
 
-  async getDefaultKeyPath(): Promise<string> {
-    if (this.isRoot) return "m/0";
+  public async getDefaultKeyPath(): Promise<string> {
+    if (this.isRoot) {
+      return "m/0";
+    }
 
     const parent = await this.parent({});
     const parentKeyPath = await parent.getDefaultKeyPath();
@@ -14,24 +17,25 @@ export default class MetaNode extends THNode {
     return `${parentKeyPath}/${siblings.indexOf(this)}`;
   }
 
-  async getUnusedChildKeyPath(): Promise<string> {
+  public async getUnusedChildKeyPath(): Promise<string> {
     const children = await this.children({});
     const defaultKeyPath = await this.getDefaultKeyPath();
     return `${defaultKeyPath}/${children.length}`;
   }
 
-  async createChild({ wallet, data, keyPath, safe }) {
-    if (!keyPath) keyPath = await this.getUnusedChildKeyPath();
+  public async createChild(wallet: Planter, { keyPath, ...opts }: IOptions = {}) {
+    if (!keyPath) {
+      keyPath = await this.getUnusedChildKeyPath();
+    }
 
     return await wallet.createNode({
-      data,
+      ...opts,
       keyPath,
-      parentTxID: this.txid,
-      safe
+      parentTxID: this.txid
     });
   }
 
-  async createUpdate({ wallet, data = [], keyPath = "m/0", safe = true }) {
+  public async createUpdate(wallet: Planter, { keyPath, ...opts }: IOptions = {}) {
     const parentTxID = this.isRoot ? null : this.tx.parent.tx;
 
     if (!keyPath) {
@@ -39,10 +43,9 @@ export default class MetaNode extends THNode {
     }
 
     return await wallet.createNode({
-      data,
+      ...opts,
       keyPath,
-      parentTxID: this.txid,
-      safe
+      parentTxID
     });
   }
 }
