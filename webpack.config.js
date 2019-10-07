@@ -1,6 +1,6 @@
 const path = require("path");
 
-let config = {
+module.exports = {
   mode: "production",
   entry: {
     planter: "./src/index.ts"
@@ -26,12 +26,4 @@ let config = {
   externals: {
     bsv: "bsv"
   }
-};
-
-module.exports = (env, argv) => {
-  if (argv.mode === "development") {
-    config.devtool = "source-map";
-  }
-
-  return config;
 };

@@ -24,6 +24,10 @@ export default class MetaNode extends THNode {
   }
 
   public async createChild(wallet: Planter, { keyPath, ...opts }: IOptions = {}) {
+    if (opts.parentTxID) {
+      throw new Error("parentTxID cannot be overriden when creating a child node.");
+    }
+
     if (!keyPath) {
       keyPath = await this.getUnusedChildKeyPath();
     }
@@ -36,6 +40,10 @@ export default class MetaNode extends THNode {
   }
 
   public async createUpdate(wallet: Planter, { keyPath, ...opts }: IOptions = {}) {
+    if (opts.parentTxID) {
+      throw new Error("Updating a node and changing its parent is disallowed at this time.");
+    }
+
     const parentTxID = this.isRoot ? null : this.tx.parent.tx;
 
     if (!keyPath) {
