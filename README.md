@@ -70,14 +70,11 @@ const node = await TreeHugger.findNodeByTxid(txid)
 
 Planter extends TreeHugger by adding two additional methods:
 
-## Creating child nodes
+## Creating child nodes and updates
 
 ```js
-await node.createChild(options)
+await node.createChild(planter, options)
+await node.createUpdate(planter, options)
 ```
 
-## Creating updates
-
-```js
-await node.createUpdate(options)
-```
+The same options as before are accepted. Additionally, you have to pass a `Planter` instance.
