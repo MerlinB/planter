@@ -6,7 +6,6 @@
 
 ![code](code.png)
 
-
 # Setup
 
 ```bash
@@ -23,7 +22,7 @@ import { Planter } from "planter"
 <script src="https://unpkg.com/bsv/bsv.min.js"></script>
 <script src="https://unpkg.com/planter/dist/planter.min.js"></script>
 ```
-Be sure to include the [bsv library](https://docs.moneybutton.com/docs/bsv-overview.html) as well when using web version.
+Be sure to include the [bsv library](https://docs.moneybutton.com/docs/bsv-overview.html) as well when using the web version.
 
 # Usage
 
@@ -57,6 +56,7 @@ These additional options can be passed:
 - `keyPath: string` - For setting the keyPath manually. Default is `m/0`.
 - `safe: boolean` - Use OP_FALSE for scripts. False by default.
 
+Successfully creating nodes returns an object that contains the new nodes `address`, `id` and `txid`.
 
 ## Traversing the Metanet
 
