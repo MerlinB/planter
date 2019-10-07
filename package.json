@@ -1,6 +1,6 @@
 {
   "name": "planter",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Create MetaNet Nodes on Bitcoin SV",
   "author": "Merlin Buczek",
   "main": "lib/index.js",
