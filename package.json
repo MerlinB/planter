@@ -8,7 +8,6 @@
   "browser": "dist/planter.min.js",
   "files": [
     "lib",
-    "lib-esm",
     "dist"
   ],
   "license": "MIT",

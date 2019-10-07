@@ -2,6 +2,7 @@ import * as BitIndexSDK from "bitindex-sdk";
 import * as bsv from "bsv";
 
 const bitindex = BitIndexSDK.instance();
+const { Buffer } = bsv.deps;
 
 const defaults = {
   feeb: 1.4,
@@ -69,12 +70,19 @@ export class Planter {
     if (!response.txid) {
       throw new Error("Error sending transaction");
     }
-    return response;
+
+    const nodeIDBuffer = Buffer.from(nodeAddress.toString() + response.txid);
+    const nodeID = bsv.crypto.Hash.sha256(nodeIDBuffer).toString("hex");
+
+    return {
+      ...response,
+      address: nodeAddress.toString(),
+      id: nodeID
+    };
   }
 }
 
 function buildScript(address?: string, data: string[] = [], parentTxID?: string, safe: boolean = false): bsv.Script {
-  const { Buffer } = bsv.deps;
   const script = new bsv.Script();
 
   if (safe) {
