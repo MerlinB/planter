@@ -1,8 +1,13 @@
-# Planter
+# planter
 
-Planter is a simple library for fetching and creating Metanet nodes on the **Bitcoin SV blockchain**.
+> Create Metanet Nodes on Bitcoin SV
 
-# Install
+*planter* is a simple library for fetching and creating Metanet nodes on the **Bitcoin SV blockchain**.
+
+![code](code.png)
+
+
+# Setup
 
 ```bash
 npm i planter
@@ -15,7 +20,7 @@ import { Planter } from "planter"
 ```
 
 ```html
-<script src="https://unpkg.com/bsv@0.30.0/bsv.min.js"></script>
+<script src="https://unpkg.com/bsv/bsv.min.js"></script>
 <script src="https://unpkg.com/planter/dist/planter.min.js"></script>
 ```
 Be sure to include the [bsv library](https://docs.moneybutton.com/docs/bsv-overview.html) as well when using web version.
@@ -61,7 +66,7 @@ These additional options can be passed:
 Planter is built on top of [TreeHugger](https://treehugger.bitpaste.app/) and exposes its API for querying and traversing metanet nodes. See TreeHuggers [Github page](https://github.com/libitx/tree-hugger) for details.
 
 ```js
-import { TreeHugger, Planter } from "planter"
+import { TreeHugger } from "planter"
 
 const node = await TreeHugger.findNodeByTxid(txid)
 ```
@@ -71,11 +76,11 @@ Planter extends TreeHugger by adding two additional methods:
 ## Creating child nodes
 
 ```js
-node.createChild()
+node.createChild(options)
 ```
 
 ## Creating updates
 
 ```js
-node.createUpdate()
+node.createUpdate(options)
 ```
