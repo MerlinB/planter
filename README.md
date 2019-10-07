@@ -29,12 +29,9 @@ Be sure to include the [bsv library](https://docs.moneybutton.com/docs/bsv-overv
 
 ```js
 const planter = new Planter();
-
-await planter.createNode({ data: ['Hello MetaNet'] })
 ```
 
-This will generate a wallet for you and create a Metanet root node.
-
+This will generate a wallet for you which will be used to derive node addresses and sign transactions.
 You can use an existing wallet by passing an [extended private Key](https://docs.moneybutton.com/docs/bsv-hd-private-key.html).
 
 ```js
@@ -76,11 +73,11 @@ Planter extends TreeHugger by adding two additional methods:
 ## Creating child nodes
 
 ```js
-node.createChild(options)
+await node.createChild(options)
 ```
 
 ## Creating updates
 
 ```js
-node.createUpdate(options)
+await node.createUpdate(options)
 ```
