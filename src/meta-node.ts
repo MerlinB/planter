@@ -1,53 +1,39 @@
+import * as bsv from "bsv";
 import * as THNode from "meta-tree-hugger/lib/meta-node";
-import { IOptions, Planter } from "./push";
+import { IOptions, Planter } from "./planter";
 
 export default class MetaNode extends THNode {
   constructor(tx) {
     super(tx);
   }
 
-  public async getDefaultKeyPath(): Promise<string> {
-    if (this.isRoot) {
-      return "m/0";
+  get keyPath(): string {
+    const pathString = this.opReturn.s4;
+    if (bsv.HDPrivateKey.isValidPath(pathString)) {
+      return pathString;
     }
-
-    const parent = await this.parent({});
-    const parentKeyPath = await parent.getDefaultKeyPath();
-    const siblings = await this.selfAndSiblings({});
-    return `${parentKeyPath}/${siblings.indexOf(this)}`;
   }
 
-  public async getUnusedChildKeyPath(): Promise<string> {
-    const children = await this.children({});
-    const defaultKeyPath = await this.getDefaultKeyPath();
-    return `${defaultKeyPath}/${children.length}`;
-  }
-
-  public async createChild(wallet: Planter, { keyPath, ...opts }: IOptions = {}) {
-    if (opts.parentTxID) {
-      throw new Error("parentTxID cannot be overriden when creating a child node.");
-    }
-
-    if (!keyPath) {
-      keyPath = await this.getUnusedChildKeyPath();
+  public async createChild(wallet: Planter, { parentTxID, ...opts }: IOptions = {}) {
+    if (parentTxID) {
+      throw new Error("parentTxID cannot be overriden when creating a child node");
     }
 
     return await wallet.createNode({
       ...opts,
-      keyPath,
       parentTxID: this.txid
     });
   }
 
-  public async createUpdate(wallet: Planter, { keyPath, ...opts }: IOptions = {}) {
-    if (opts.parentTxID) {
-      throw new Error("Updating a node and changing its parent is disallowed at this time.");
+  public async createUpdate(wallet: Planter, { keyPath, parentTxID, ...opts }: IOptions = {}) {
+    if (this.keyPath && keyPath) {
+      throw new Error("keyPath already set in OP_RETURN");
+    } else if (!this.keyPath && !keyPath) {
+      throw new Error("No keyPath provided for existing node");
     }
 
-    const parentTxID = this.isRoot ? null : this.tx.parent.tx;
-
-    if (!keyPath) {
-      keyPath = await this.getDefaultKeyPath();
+    if (!parentTxID) {
+      parentTxID = this.isRoot ? null : this.tx.parent.tx;
     }
 
     return await wallet.createNode({

@@ -53,14 +53,24 @@ These additional options can be passed:
 
 - `data: string[]` - Array of data to include in `OP_RETURN`
 - `parentTxID: string` - For creating child nodes.
-- `keyPath: string` - For setting the keyPath manually. Default is `m/0`.
-- `safe: boolean` - Use OP_FALSE for scripts. False by default.
+- `parentKeyPath: string` - Can be passed when `parentTxID` is also passed to override `keyPath` of parent node.
+- `keyPath: string` - For setting the keypath manually. Default is `m/0`.
+- `safe: boolean` - Use OP_FALSE for scripts. Default is `false`.
+- `includeKeyPath: boolean` - Write `keyPath` information to `OP_RETURN`. Defaults to `true`. Can be deactivated to manage keyPaths locally.
 
-Successfully creating nodes returns an object that contains the new nodes `address`, `id` and `txid`.
+Successfully creating nodes returns an object that contains the new nodes `address`, `id`, `txid` and used `keyPath`.
 
 ## Traversing the Metanet
 
+```js
+await planter.findAllNodes()
+```
+
+This will query all nodes owned by the `Planter` instance.
+
 Planter is built on top of [TreeHugger](https://treehugger.bitpaste.app/) and exposes its API for querying and traversing metanet nodes. See TreeHuggers [Github page](https://github.com/libitx/tree-hugger) for details.
+
+*planter* also exposes TreeHugger directly for general node querying.
 
 ```js
 import { TreeHugger } from "planter"
@@ -68,7 +78,33 @@ import { TreeHugger } from "planter"
 const node = await TreeHugger.findNodeByTxid(txid)
 ```
 
-Planter extends TreeHugger by adding two additional methods:
+### Queries
+
+```js
+await planter.findSingleNode(query)
+await planter.findAllNodes(query)
+
+await planter.findNodeById(id)
+await planter.findNodeByTxid(txid)
+await planter.findNodesByAddress(address)
+await planter.findNodesByParentId(id)
+await planter.findNodeAndDescendants(id)
+```
+
+### Nodes
+
+```js
+await node.root()
+await node.parent()
+await node.ancestors()
+await node.siblings()
+await node.children()
+await node.descendants()
+await node.selfAndAncestors()
+await node.selfAndSiblings()
+await node.selfAndChildren()
+await node.selfAndDescendants()
+```
 
 ## Creating child nodes and updates
 
@@ -77,4 +113,8 @@ await node.createChild(planter, options)
 await node.createUpdate(planter, options)
 ```
 
-The same options as before are accepted. Additionally, you have to pass a `Planter` instance.
+The same options as before are accepted. Additionally, the `Planter` instance that should be used has to be passed.
+
+## Under the hood
+
+*planter* randomly generates the keypaths used to derive node addresses to avoid accidental reuse and writes them onto the `OP_RETURN` data right after the metanet protocol keywords.

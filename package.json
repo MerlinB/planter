@@ -20,7 +20,7 @@
   ],
   "scripts": {
     "build": "tsc && webpack",
-    "dev": "webpack --mode=development --devtool=inline-source-map",
+    "dev": "tsc && webpack --mode=development --devtool=inline-source-map",
     "lint": "tslint -p tsconfig.json",
     "prepare": "npm run build"
   },
