@@ -166,7 +166,7 @@ export class Planter {
     const response = await bitindex.tx.send(tx.toString());
 
     if (!response.txid) {
-      throw new Error("Error sending transaction");
+      return response;
     }
 
     const nodeIDBuffer = Buffer.from(nodeAddress.toString() + response.txid);

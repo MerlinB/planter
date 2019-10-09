@@ -14,13 +14,22 @@ export default class MetaNode extends THNode {
     }
   }
 
-  public async createChild(wallet: Planter, { parentTxID, ...opts }: IOptions = {}) {
+  public async createChild(wallet: Planter, { parentTxID, parentKeyPath, ...opts }: IOptions = {}) {
     if (parentTxID) {
       throw new Error("parentTxID cannot be overriden when creating a child node");
     }
 
+    if (this.keyPath && parentKeyPath) {
+      throw new Error("parent node keyPath already set in OP_RETURN");
+    } else if (!this.keyPath && !parentKeyPath) {
+      throw new Error("No keyPath provided for parent node");
+    }
+
+    parentKeyPath = parentKeyPath || this.keyPath;
+
     return await wallet.createNode({
       ...opts,
+      parentKeyPath,
       parentTxID: this.txid
     });
   }
@@ -31,6 +40,8 @@ export default class MetaNode extends THNode {
     } else if (!this.keyPath && !keyPath) {
       throw new Error("No keyPath provided for existing node");
     }
+
+    keyPath = keyPath || this.keyPath;
 
     if (!parentTxID) {
       parentTxID = this.isRoot ? null : this.tx.parent.tx;
