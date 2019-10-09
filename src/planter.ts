@@ -31,6 +31,7 @@ interface IScriptOptions {
 
 export class Planter {
   public xprivKey: bsv.HDPrivateKey;
+  private spendInputs: bsv.Transaction.Output[];
   private query: object;
 
   constructor(xprivKey?: string) {
@@ -38,6 +39,7 @@ export class Planter {
     this.query = {
       "in.h1": this.publicKey
     };
+    this.spendInputs = [];
   }
 
   get fundingAddress() {
@@ -102,6 +104,14 @@ export class Planter {
 
     const nodeAddress = this.xprivKey.deriveChild(keyPath).publicKey.toAddress();
 
+    const utxos = await bitindex.address.getUtxos(this.fundingAddress);
+
+    if (utxos.some(output => this.isSpend(output))) {
+      return this.createNode({ data, parentTxID, parentKeyPath, keyPath, safe, includeKeyPath });
+    }
+
+    const balance = utxos.reduce((a, c) => a + c.satoshis, 0);
+
     const scriptOptions: IScriptOptions = {
       address: nodeAddress.toString(),
       data,
@@ -112,9 +122,6 @@ export class Planter {
       scriptOptions.keyPath = keyPath;
     }
     const script = buildScript(scriptOptions);
-
-    const utxos = await bitindex.address.getUtxos(this.fundingAddress);
-    const balance = utxos.reduce((a, c) => a + c.satoshis, 0);
 
     const tx = new bsv.Transaction()
       .from(utxos)
@@ -172,12 +179,23 @@ export class Planter {
     const nodeIDBuffer = Buffer.from(nodeAddress.toString() + response.txid);
     const nodeID = bsv.crypto.Hash.sha256(nodeIDBuffer).toString("hex");
 
+    this.spendInputs = [...this.spendInputs, ...tx.inputs];
+
     return {
       ...response,
       address: nodeAddress.toString(),
       id: nodeID,
       keyPath
     };
+  }
+
+  private isSpend(utxo): boolean {
+    for (const spend of this.spendInputs) {
+      if (utxo.txid === spend.prevTxId.toString("hex") && utxo.outputIndex === spend.outputIndex) {
+        return true;
+      }
+    }
+    return false;
   }
 }
 
