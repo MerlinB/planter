@@ -1,4 +1,4 @@
-import * as bsv from "bsv";
+import bsv from "bsv";
 
 export function getRandomKeyPath(): string {
   const maxLength = 9;

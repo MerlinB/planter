@@ -1,10 +1,10 @@
-import * as BitIndexSDK from "bitindex-sdk";
-import * as bsv from "bsv";
+import { instance } from "bitindex-sdk";
+import bsv from "bsv";
 import { TreeHugger } from "./index";
 import MetaNode from "./meta-node";
 import { getRandomKeyPath } from "./utils";
 
-const bitindex = BitIndexSDK.instance();
+const bitindex = instance();
 const { Buffer } = bsv.deps;
 
 const defaults = {

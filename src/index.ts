@@ -1,4 +1,4 @@
-import * as TreeHugger from "meta-tree-hugger";
+import TreeHugger from "meta-tree-hugger";
 import MetaNode from "./meta-node";
 import { Planter } from "./planter";
 

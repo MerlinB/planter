@@ -1,5 +1,5 @@
-import * as bsv from "bsv";
-import * as THNode from "meta-tree-hugger/lib/meta-node";
+import bsv from "bsv";
+import THNode from "meta-tree-hugger/lib/meta-node";
 import { IOptions, Planter } from "./planter";
 
 export default class MetaNode extends THNode {
