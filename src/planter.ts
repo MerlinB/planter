@@ -55,7 +55,7 @@ export class Planter {
       ...query,
       ...this.query
     };
-    return await TreeHugger.findSingleNode(query, opts);
+    return await TreeHugger.findSingleNode({ query }, opts);
   }
 
   public async findAllNodes(query = {}, opts?): Promise<MetaNode[]> {
@@ -63,7 +63,7 @@ export class Planter {
       ...query,
       ...this.query
     };
-    return await TreeHugger.findAllNodes(query, opts);
+    return await TreeHugger.findAllNodes({ query }, opts);
   }
 
   public async findNodeById(id, opts?): Promise<MetaNode> {
