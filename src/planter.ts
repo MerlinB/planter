@@ -50,20 +50,20 @@ export class Planter {
     return this.xprivKey.publicKey.toString();
   }
 
-  public async findSingleNode(query = {}, opts?): Promise<MetaNode> {
-    query = {
-      ...query,
+  public async findSingleNode(find = {}, opts?): Promise<MetaNode> {
+    find = {
+      ...find,
       ...this.query
     };
-    return await TreeHugger.findSingleNode({ query }, opts);
+    return await TreeHugger.findSingleNode({ find }, opts);
   }
 
-  public async findAllNodes(query = {}, opts?): Promise<MetaNode[]> {
-    query = {
-      ...query,
+  public async findAllNodes(find = {}, opts?): Promise<MetaNode[]> {
+    find = {
+      ...find,
       ...this.query
     };
-    return await TreeHugger.findAllNodes({ query }, opts);
+    return await TreeHugger.findAllNodes({ find }, opts);
   }
 
   public async findNodeById(id, opts?): Promise<MetaNode> {
