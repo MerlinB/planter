@@ -37,7 +37,7 @@ export class Planter {
   constructor(xprivKey?: string) {
     this.xprivKey = xprivKey ? bsv.HDPrivateKey.fromString(xprivKey) : bsv.HDPrivateKey.fromRandom();
     this.query = {
-      "in.h1": this.publicKey
+      "in.tape.cell.b": this.encodedPubKey
     };
     this.spendInputs = [];
   }
@@ -50,20 +50,24 @@ export class Planter {
     return this.xprivKey.publicKey.toString();
   }
 
-  public async findSingleNode(find = {}, opts?): Promise<MetaNode> {
-    find = {
-      ...find,
-      ...this.query
-    };
-    return await TreeHugger.findSingleNode({ find }, opts);
+  get encodedPubKey() {
+    return btoa(this.xprivKey.publicKey.toDER().toString("latin1"));
   }
 
-  public async findAllNodes(find = {}, opts?): Promise<MetaNode[]> {
-    find = {
-      ...find,
+  public async findSingleNode(request = { find: {} }, opts?): Promise<MetaNode> {
+    request.find = {
+      ...request.find,
       ...this.query
     };
-    return await TreeHugger.findAllNodes({ find }, opts);
+    return await TreeHugger.findSingleNode(request, opts);
+  }
+
+  public async findAllNodes(request = { find: {} }, opts?): Promise<MetaNode[]> {
+    request.find = {
+      ...request.find,
+      ...this.query
+    };
+    return await TreeHugger.findAllNodes(request, opts);
   }
 
   public async findNodeById(id, opts?): Promise<MetaNode> {
