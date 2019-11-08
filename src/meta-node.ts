@@ -8,7 +8,9 @@ export default class MetaNode extends THNode {
   }
 
   get keyPath(): string {
-    const pathString = this.opReturn.s4;
+    const metaOutput = this.opReturn.find(c => c.cell.length && c.cell[0].s === "meta");
+    const pathString = metaOutput && metaOutput.cell.length >= 4 ? metaOutput.cell[3].s : null;
+
     if (bsv.HDPrivateKey.isValidPath(pathString)) {
       return pathString;
     }
