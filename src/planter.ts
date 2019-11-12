@@ -51,7 +51,7 @@ export class Planter {
   }
 
   get encodedPubKey() {
-    return btoa(this.xprivKey.publicKey.toDER().toString("latin1"));
+    return this.xprivKey.publicKey.toDER().toString("base64");
   }
 
   public async findSingleNode(request = { find: {} }, opts?): Promise<MetaNode> {
