@@ -42,7 +42,7 @@ export class Planter {
       "in.tape.cell.b": this.encodedPubKey
     };
     this.spendInputs = [];
-    mattercloud = instance(apiKey)
+    mattercloud = instance(this.apiKey)
   }
 
   get fundingAddress() {
