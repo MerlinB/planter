@@ -4,7 +4,6 @@ import { TreeHugger } from "./index";
 import MetaNode from "./meta-node";
 import { getRandomKeyPath } from "./utils";
 
-let mattercloud = null;
 const { Buffer } = bsv.deps;
 
 const defaults = {
@@ -35,6 +34,7 @@ export class Planter {
   public feeb: number;
   private spendInputs: bsv.Transaction.Output[];
   private query: object;
+  private mattercloud;
 
   constructor(xprivKey?: string, apiKey?: string, feeb?: number) {
     this.xprivKey = xprivKey ? bsv.HDPrivateKey.fromString(xprivKey) : bsv.HDPrivateKey.fromRandom();
@@ -43,7 +43,7 @@ export class Planter {
       "in.tape.cell.b": this.encodedPubKey
     };
     this.spendInputs = [];
-    mattercloud = instance(this.apiKey);
+    this.mattercloud = instance({ api_key: this.apiKey });
     this.feeb = feeb ? feeb : defaults.feeb;
   }
 
@@ -113,7 +113,7 @@ export class Planter {
 
     const nodeAddress = this.xprivKey.deriveChild(keyPath).publicKey.toAddress();
 
-    const utxos = await mattercloud.getUtxos(this.fundingAddress, {});
+    const utxos = await this.mattercloud.getUtxos(this.fundingAddress, {});
 
     if (utxos.some(output => this.isSpend(output))) {
       return this.createNode({ data, parentTxID, parentKeyPath, keyPath, safe, includeKeyPath });
@@ -157,7 +157,7 @@ export class Planter {
 
       const parentXPrivKey = this.xprivKey.deriveChild(parentKeyPath);
       const parentAddress = parentXPrivKey.publicKey.toAddress().toString();
-      const parentUtxos = await mattercloud.getUtxos(parentAddress, {});
+      const parentUtxos = await this.mattercloud.getUtxos(parentAddress, {});
       const parentPrivKey = parentXPrivKey.privateKey.toString();
 
       if (parentUtxos.length === 0) {
@@ -179,7 +179,7 @@ export class Planter {
     tx.fee(fee);
     tx.sign(privateKeys);
 
-    const response = await mattercloud.sendRawTx(tx.toString());
+    const response = await this.mattercloud.sendRawTx(tx.toString());
 
     if (!response.txid) {
       return response;
