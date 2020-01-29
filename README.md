@@ -58,7 +58,7 @@ These additional options can be passed:
 - `parentTxID: string` - For creating child nodes.
 - `parentKeyPath: string` - Can be passed when `parentTxID` is also passed to override `keyPath` of parent node.
 - `keyPath: string` - For setting the keypath manually. Default is `m/0`.
-- `safe: boolean` - Use OP_FALSE for scripts. Default is `false`.
+- `safe: boolean` - Use OP_FALSE for scripts. Default is `true`.
 - `includeKeyPath: boolean` - Write `keyPath` information to `OP_RETURN`. Defaults to `true`. Can be deactivated to manage keyPaths locally.
 
 Successfully creating nodes returns an object that contains the new nodes `address`, `id`, `txid` and used `keyPath`.
