@@ -103,7 +103,7 @@ export class Planter {
     return await TreeHugger.findAllNodes({ find }, opts);
   }
 
-  public async createNode({ data, parentTxID, parentKeyPath, keyPath, safe, includeKeyPath = true }: IOptions = {}) {
+  public async createNode({ data, parentTxID, parentKeyPath, keyPath, safe = true, includeKeyPath = true }: IOptions = {}) {
     keyPath = keyPath || getRandomKeyPath();
 
     const nodeAddress = this.xprivKey.deriveChild(keyPath).publicKey.toAddress();
