@@ -40,6 +40,23 @@ const planter = new Planter(
 );
 ```
 
+The Mattercloud API requires an api key.
+By default the public key from the wallet is used.
+Alternatevily it can be passed to the constructor as the second argument.
+
+```js
+const planter = new Planter(
+  "xprv9s21ZrQH143K3eQCpBqZiuLgNSFPAfkqimfqyDxJ6HAaVUqWWJ4vz7eZdhgkR66jD1a2BtQEXbYjjbfVXWhxz7g4sNujBt6cnAoJrdfLkHh","198t2pusaKhaqHSRsfQBtfyE2XR8Xe7Wsd"
+);
+```
+
+To change the default fee/byte of 1.4satoshi a third argument is accepted.
+```js
+const planter = new Planter(
+  "xprv9s21ZrQH143K3eQCpBqZiuLgNSFPAfkqimfqyDxJ6HAaVUqWWJ4vz7eZdhgkR66jD1a2BtQEXbYjjbfVXWhxz7g4sNujBt6cnAoJrdfLkHh","198t2pusaKhaqHSRsfQBtfyE2XR8Xe7Wsd", 0.5
+);
+```
+
 Funding can be provided by depositing BSV to the associated address.
 
 ```js

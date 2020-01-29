@@ -32,17 +32,19 @@ interface IScriptOptions {
 export class Planter {
   public xprivKey: bsv.HDPrivateKey;
   public apiKey: string;
+  public feeb: number;
   private spendInputs: bsv.Transaction.Output[];
   private query: object;
 
-  constructor(xprivKey?: string, apiKey?: string) {
+  constructor(xprivKey?: string, apiKey?: string, feeb?: number) {
     this.xprivKey = xprivKey ? bsv.HDPrivateKey.fromString(xprivKey) : bsv.HDPrivateKey.fromRandom();
     this.apiKey = apiKey ? this.apiKey = apiKey : this.xprivKey.publicKey.toAddress().toString();
     this.query = {
       "in.tape.cell.b": this.encodedPubKey
     };
     this.spendInputs = [];
-    mattercloud = instance(this.apiKey)
+    mattercloud = instance(this.apiKey);
+    this.feeb = feeb ? feeb : defaults.feeb;
   }
 
   get fundingAddress() {
@@ -168,7 +170,7 @@ export class Planter {
       privateKeys.push(parentPrivKey);
     }
 
-    const fee = Math.ceil(tx._estimateSize() * defaults.feeb);
+    const fee = Math.ceil(tx._estimateSize() * this.feeb);
 
     if (balance < fee) {
       throw new Error(`Not enough money (${balance} sat < ${fee} sat)`);
