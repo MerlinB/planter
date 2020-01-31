@@ -1,10 +1,10 @@
-import { instance } from "bitindex-sdk";
 import bsv from "bsv";
 import { TreeHugger } from "./index";
 import MetaNode from "./meta-node";
+import NodeInterface from "./node-interface";
+import { BitIndex } from "./node-interfaces/bitindex";
 import { getRandomKeyPath } from "./utils";
 
-const bitindex = instance();
 const { Buffer } = bsv.deps;
 
 const defaults = {
@@ -12,7 +12,13 @@ const defaults = {
   minimumOutputValue: 546
 };
 
-export interface IOptions {
+interface IOptions {
+  xprivKey?: string;
+  nodeInterface?: NodeInterface;
+  feeb?: number;
+}
+
+export interface INodeOptions {
   data?: string[];
   parentTxID?: string;
   parentKeyPath?: string;
@@ -31,15 +37,19 @@ interface IScriptOptions {
 
 export class Planter {
   public xprivKey: bsv.HDPrivateKey;
+  public feeb: number;
+  public nodeInterface: NodeInterface;
   private spendInputs: bsv.Transaction.Output[];
   private query: object;
 
-  constructor(xprivKey?: string) {
+  constructor({ xprivKey, nodeInterface = new BitIndex(), feeb = defaults.feeb }: IOptions = {}) {
     this.xprivKey = xprivKey ? bsv.HDPrivateKey.fromString(xprivKey) : bsv.HDPrivateKey.fromRandom();
     this.query = {
       "in.tape.cell.b": this.encodedPubKey
     };
     this.spendInputs = [];
+    this.feeb = feeb;
+    this.nodeInterface = nodeInterface;
   }
 
   get fundingAddress() {
@@ -103,12 +113,19 @@ export class Planter {
     return await TreeHugger.findAllNodes({ find }, opts);
   }
 
-  public async createNode({ data, parentTxID, parentKeyPath, keyPath, safe, includeKeyPath = true }: IOptions = {}) {
+  public async createNode({
+    data,
+    parentTxID,
+    parentKeyPath,
+    keyPath,
+    safe = true,
+    includeKeyPath = true
+  }: INodeOptions = {}) {
     keyPath = keyPath || getRandomKeyPath();
 
     const nodeAddress = this.xprivKey.deriveChild(keyPath).publicKey.toAddress();
 
-    const utxos = await bitindex.address.getUtxos(this.fundingAddress);
+    const utxos = await this.nodeInterface.getUTXOs(this.fundingAddress);
 
     if (utxos.some(output => this.isSpend(output))) {
       return this.createNode({ data, parentTxID, parentKeyPath, keyPath, safe, includeKeyPath });
@@ -152,7 +169,7 @@ export class Planter {
 
       const parentXPrivKey = this.xprivKey.deriveChild(parentKeyPath);
       const parentAddress = parentXPrivKey.publicKey.toAddress().toString();
-      const parentUtxos = await bitindex.address.getUtxos(parentAddress);
+      const parentUtxos = await this.nodeInterface.getUTXOs(parentAddress);
       const parentPrivKey = parentXPrivKey.privateKey.toString();
 
       if (parentUtxos.length === 0) {
@@ -165,7 +182,7 @@ export class Planter {
       privateKeys.push(parentPrivKey);
     }
 
-    const fee = Math.ceil(tx._estimateSize() * defaults.feeb);
+    const fee = Math.ceil(tx._estimateSize() * this.feeb);
 
     if (balance < fee) {
       throw new Error(`Not enough money (${balance} sat < ${fee} sat)`);
@@ -174,7 +191,7 @@ export class Planter {
     tx.fee(fee);
     tx.sign(privateKeys);
 
-    const response = await bitindex.tx.send(tx.toString());
+    const response = await this.nodeInterface.sendRawTX(tx.toString());
 
     if (!response.txid) {
       return response;

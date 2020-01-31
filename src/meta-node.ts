@@ -1,6 +1,6 @@
 import bsv from "bsv";
 import THNode from "meta-tree-hugger/lib/meta-node";
-import { IOptions, Planter } from "./planter";
+import { INodeOptions, Planter } from "./planter";
 
 export default class MetaNode extends THNode {
   constructor(tx) {
@@ -16,7 +16,7 @@ export default class MetaNode extends THNode {
     }
   }
 
-  public async createChild(wallet: Planter, { parentTxID, parentKeyPath, ...opts }: IOptions = {}) {
+  public async createChild(wallet: Planter, { parentTxID, parentKeyPath, ...opts }: INodeOptions = {}) {
     if (parentTxID) {
       throw new Error("parentTxID cannot be overriden when creating a child node");
     }
@@ -36,7 +36,7 @@ export default class MetaNode extends THNode {
     });
   }
 
-  public async createUpdate(wallet: Planter, { keyPath, parentTxID, ...opts }: IOptions = {}) {
+  public async createUpdate(wallet: Planter, { keyPath, parentTxID, ...opts }: INodeOptions = {}) {
     if (this.keyPath && keyPath) {
       throw new Error("keyPath already set in OP_RETURN");
     } else if (!this.keyPath && !keyPath) {

@@ -32,12 +32,32 @@ const planter = new Planter();
 ```
 
 This will generate a wallet for you which will be used to derive node addresses and sign transactions.
-You can use an existing wallet by passing an [extended private Key](https://docs.moneybutton.com/docs/bsv-hd-private-key.html).
+You can use an existing wallet by passing an [extended private Key](https://docs.moneybutton.com/docs/bsv-hd-private-key.html) inside of the config object.
 
 ```js
-const planter = new Planter(
-  "xprv9s21ZrQH143K3eQCpBqZiuLgNSFPAfkqimfqyDxJ6HAaVUqWWJ4vz7eZdhgkR66jD1a2BtQEXbYjjbfVXWhxz7g4sNujBt6cnAoJrdfLkHh"
-);
+const planter = new Planter({
+  xprivKey:
+    "xprv9s21ZrQH143K3eQCpBqZiuLgNSFPAfkqimfqyDxJ6HAaVUqWWJ4vz7eZdhgkR66jD1a2BtQEXbYjjbfVXWhxz7g4sNujBt6cnAoJrdfLkHh"
+});
+```
+
+Accepted config options are
+
+- `xprivKey: string` - An extended private Key from which the wallet and nodes are generated.
+- `feeb: number` - Fee per byte. Default is `1.4`
+- `nodeInterface` - The instance of an implementation of a `NodeInterface`. Implementations exist in `src/node-interfaces/`.
+
+By default, the Bitindex API is used for pushing transactions and fetching UTXOs. An Implementation for the newer MatterCloud API exists as well.
+New MatterCloud instances can be passed an API key, alternatively a new one is automatically requested.
+
+```js
+import { Mattercloud } from "planter/lib/node-interfaces/mattercloud";
+
+const planter = new Planter({
+  nodeInterface: new Mattercloud({
+    apiKey: "198t2pusaKhaqHSRsfQBtfyE2XR8Xe7Wsd"
+  })
+});
 ```
 
 Funding can be provided by depositing BSV to the associated address.
@@ -58,7 +78,7 @@ These additional options can be passed:
 - `parentTxID: string` - For creating child nodes.
 - `parentKeyPath: string` - Can be passed when `parentTxID` is also passed to override `keyPath` of parent node.
 - `keyPath: string` - For setting the keypath manually. Default is `m/0`.
-- `safe: boolean` - Use OP_FALSE for scripts. Default is `false`.
+- `safe: boolean` - Use OP_FALSE for scripts. Default is `true`.
 - `includeKeyPath: boolean` - Write `keyPath` information to `OP_RETURN`. Defaults to `true`. Can be deactivated to manage keyPaths locally.
 
 Successfully creating nodes returns an object that contains the new nodes `address`, `id`, `txid` and used `keyPath`.

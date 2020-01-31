@@ -1,6 +1,6 @@
 {
   "name": "planter",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "description": "Create MetaNet Nodes on Bitcoin SV",
   "author": "Merlin Buczek",
   "main": "lib/index.js",
@@ -25,8 +25,10 @@
     "prepare": "npm run build"
   },
   "dependencies": {
-    "bitindex-sdk": "^3.0.14",
-    "bsv": "^0.30.0",
+    "axios": "^0.19.2",
+    "bsv": "^1.2.0",
+    "mattercloudjs": "^1.0.6",
+    "bitindex-sdk": "^3.4.2",
     "meta-tree-hugger": "^0.1.0",
     "webpack-bundle-analyzer": "^3.5.2"
   },
