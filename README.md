@@ -32,29 +32,32 @@ const planter = new Planter();
 ```
 
 This will generate a wallet for you which will be used to derive node addresses and sign transactions.
-You can use an existing wallet by passing an [extended private Key](https://docs.moneybutton.com/docs/bsv-hd-private-key.html).
+You can use an existing wallet by passing an [extended private Key](https://docs.moneybutton.com/docs/bsv-hd-private-key.html) inside of the config object.
 
 ```js
-const planter = new Planter(
-  "xprv9s21ZrQH143K3eQCpBqZiuLgNSFPAfkqimfqyDxJ6HAaVUqWWJ4vz7eZdhgkR66jD1a2BtQEXbYjjbfVXWhxz7g4sNujBt6cnAoJrdfLkHh"
-);
+const planter = new Planter({
+  xprivKey:
+    "xprv9s21ZrQH143K3eQCpBqZiuLgNSFPAfkqimfqyDxJ6HAaVUqWWJ4vz7eZdhgkR66jD1a2BtQEXbYjjbfVXWhxz7g4sNujBt6cnAoJrdfLkHh"
+});
 ```
 
-The Mattercloud API requires an api key.
-By default the public key from the wallet is used.
-Alternatevily it can be passed to the constructor as the second argument.
+Accepted config options are
+
+- `xprivKey: string` - An extended private Key from which the wallet and nodes are generated.
+- `feeb: number` - Fee per byte. Default is `1.4`
+- `nodeInterface` - The instance of an implementation of a `NodeInterface`. Implementations exist in `src/node-interfaces/`.
+
+By default, the Bitindex API is used for pushing transactions and fetching UTXOs. An Implementation for the newer MatterCloud API exists as well.
+New MatterCloud instances can be passed an API key, alternatively a new one is automatically requested.
 
 ```js
-const planter = new Planter(
-  "xprv9s21ZrQH143K3eQCpBqZiuLgNSFPAfkqimfqyDxJ6HAaVUqWWJ4vz7eZdhgkR66jD1a2BtQEXbYjjbfVXWhxz7g4sNujBt6cnAoJrdfLkHh","198t2pusaKhaqHSRsfQBtfyE2XR8Xe7Wsd"
-);
-```
+import { Mattercloud } from "planter/lib/node-interfaces/mattercloud";
 
-To change the default fee/byte of 1.4satoshi a third argument is accepted.
-```js
-const planter = new Planter(
-  "xprv9s21ZrQH143K3eQCpBqZiuLgNSFPAfkqimfqyDxJ6HAaVUqWWJ4vz7eZdhgkR66jD1a2BtQEXbYjjbfVXWhxz7g4sNujBt6cnAoJrdfLkHh","198t2pusaKhaqHSRsfQBtfyE2XR8Xe7Wsd", 0.5
-);
+const planter = new Planter({
+  nodeInterface: new Mattercloud({
+    apiKey: "198t2pusaKhaqHSRsfQBtfyE2XR8Xe7Wsd"
+  })
+});
 ```
 
 Funding can be provided by depositing BSV to the associated address.
